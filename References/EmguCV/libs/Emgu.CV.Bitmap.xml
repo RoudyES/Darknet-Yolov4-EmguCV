@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Emgu.CV.Bitmap</name>
+    </assembly>
+    <members>
+        <member name="T:Emgu.CV.BitmapExtension">
+            <summary>
+            Provide extension method to convert IInputArray to and from Bitmap
+            </summary>
+        </member>
+        <member name="F:Emgu.CV.BitmapExtension.GrayscalePalette">
+            <summary>
+            The ColorPalette of Grayscale for Bitmap Format8bppIndexed
+            </summary>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.ColorPaletteToLookupTable(System.Drawing.Imaging.ColorPalette,Emgu.CV.Matrix{System.Byte}@,Emgu.CV.Matrix{System.Byte}@,Emgu.CV.Matrix{System.Byte}@,Emgu.CV.Matrix{System.Byte}@)">
+            <summary>
+            Convert the color palette to four lookup tables
+            </summary>
+            <param name="palette">The color palette to transform</param>
+            <param name="bTable">Lookup table for the B channel</param>
+            <param name="gTable">Lookup table for the G channel</param>
+            <param name="rTable">Lookup table for the R channel</param>
+            <param name="aTable">Lookup table for the A channel</param>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.RawDataToBitmap(System.IntPtr,System.Int32,System.Drawing.Size,System.Type,System.Int32,System.Type,System.Boolean)">
+            <summary>
+            Convert raw data to bitmap
+            </summary>
+            <param name="scan0">The pointer to the raw data</param>
+            <param name="step">The step</param>
+            <param name="size">The size of the image</param>
+            <param name="srcColorType">The source image color type</param>
+            <param name="numberOfChannels">The number of channels</param>
+            <param name="srcDepthType">The source image depth type</param>
+            <param name="tryDataSharing">Try to create Bitmap that shares the data with the image</param>
+            <returns>A bitmap representation of the image.</returns>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.ToBitmap(Emgu.CV.Mat)">
+            <summary>
+            Convert the mat into Bitmap, the pixel values are copied over to the Bitmap
+            </summary>
+            <param name="mat">The Mat to be converted to Bitmap</param>
+            <returns>A bitmap representation of the image.</returns>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.ToBitmap(Emgu.CV.UMat)">
+            <summary>
+            Convert the umat into Bitmap, the pixel values are copied over to the Bitmap
+            </summary>
+            <param name="umat">The UMat to be converted to Bitmap</param>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.ToBitmap(Emgu.CV.Cuda.GpuMat)">
+            <summary>
+            Convert the gpuMat into Bitmap, the pixel values are copied over to the Bitmap
+            </summary>
+            <param name="gpuMat">The gpu mat to be converted to Bitmap</param>
+            <returns>A bitmap representation of the image.</returns>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.ToImage``2(System.Drawing.Bitmap)">
+            <summary>
+            Create an Image &lt; TColor, TDepth &gt; from Bitmap
+            </summary>
+            <param name="bitmap">The Bitmap to be converted to Image &lt; TColor, TDepth &gt;</param>
+            <typeparam name="TColor">The color type of the Image</typeparam>
+            <typeparam name="TDepth">The depth type of the Image</typeparam>
+            <returns>The Image &lt; TColor, TDepth &gt; converted from Bitmap</returns>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.CopyFromBitmap``2(Emgu.CV.Image{``0,``1},System.Drawing.Bitmap)">
+            <summary>
+            Utility function for converting Bitmap to Image
+            </summary>
+            <param name="bmp">the bitmap to copy data from</param>
+            <param name="image">The image to copy data to</param>
+            <typeparam name="TColor">The color type of the Image</typeparam>
+            <typeparam name="TDepth">The depth type of the Image</typeparam>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.AsBitmap``2(Emgu.CV.Image{``0,``1})">
+            <summary>
+            Provide a more efficient way to convert Image&lt;Gray, Byte&gt;, Image&lt;Bgr, Byte&gt; and Image&lt;Bgra, Byte&gt; into Bitmap
+            such that the image data is <b>shared</b> with Bitmap. 
+            If you change the pixel value on the Bitmap, you change the pixel values on the Image object as well!
+            For other types of image this property has the same effect as ToBitmap()
+            <b>Take extra caution not to use the Bitmap after the Image object is disposed</b>
+            </summary>
+            <typeparam name="TColor">The color of the image</typeparam>
+            <typeparam name="TDepth">The depth of the image</typeparam>
+            <param name="image">The image to create Bitmap from</param>
+            <returns>A bitmap representation of the image. In the cases of Image&lt;Gray, Byte&gt;, Image&lt;Bgr, Byte&gt; and Image&lt;Bgra, Byte&gt;, the image data is shared between the Bitmap and the Image object.</returns>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.ToBitmap``2(Emgu.CV.Image{``0,``1})">
+            <summary> 
+            Convert this image into Bitmap, the pixel values are copied over to the Bitmap
+            </summary>
+            <typeparam name="TColor">The color type of the Image</typeparam>
+            <typeparam name="TDepth">The depth type of the Image</typeparam>
+            <param name="image">The image to be converted to Bitmap</param>
+            <remarks> For better performance on Image&lt;Gray, Byte&gt; and Image&lt;Bgr, Byte&gt;, consider using the Bitmap property </remarks>
+            <returns> This image in Bitmap format, the pixel data are copied over to the Bitmap</returns>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.ToBitmap``2(Emgu.CV.Image{``0,``1},System.Int32,System.Int32)">
+            <summary> Create a Bitmap image of certain size</summary>
+            <param name="image">The image to be converted to Bitmap</param>
+            <param name="width">The width of the bitmap</param>
+            <param name="height"> The height of the bitmap</param>
+            <typeparam name="TColor">The color type of the Image</typeparam>
+            <typeparam name="TDepth">The depth type of the Image</typeparam>
+            <returns> This image in Bitmap format of the specific size</returns>
+        </member>
+        <member name="M:Emgu.CV.BitmapExtension.ToBitmap``2(Emgu.CV.Cuda.CudaImage{``0,``1})">
+            <summary>
+            Convert the CudaImage to its equivalent Bitmap representation
+            </summary>
+            <param name="cudaImage">The cuda image to be converted to Bitmap</param>
+            <typeparam name="TColor">The color type of the CudaImage</typeparam>
+            <typeparam name="TDepth">The depth type of the CudaImage</typeparam>
+            <returns> This image in Bitmap format, the pixel data are copied over to the Bitmap</returns>
+        </member>
+        <member name="T:Emgu.CV.BitmapFileReaderMat">
+            <summary>
+            Class that can be used to read file into Mat
+            </summary>
+        </member>
+        <member name="M:Emgu.CV.BitmapFileReaderMat.ReadFile(System.String,Emgu.CV.Mat,Emgu.CV.CvEnum.ImreadModes)">
+            <summary>
+            Read the file into a Mat
+            </summary>
+            <param name="fileName">The name of the image file</param>
+            <param name="mat">The Mat to read into</param>
+            <param name="loadType">Image load type.</param>
+            <returns>True if the file can be read into the Mat</returns>
+        </member>
+        <member name="T:Emgu.CV.BitmapFileWriterMat">
+            <summary>
+            Class that can be used to write the Mat to a file
+            </summary>
+        </member>
+        <member name="M:Emgu.CV.BitmapFileWriterMat.WriteFile(Emgu.CV.Mat,System.String)">
+            <summary>
+            Write the Mat into the file
+            </summary>
+            <param name="mat">The Mat to write</param>
+            <param name="fileName">The name of the file to be written into</param>
+            <returns>True if the file has been written into Mat</returns>
+        </member>
+    </members>
+</doc>

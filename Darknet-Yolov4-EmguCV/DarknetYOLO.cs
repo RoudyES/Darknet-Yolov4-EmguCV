@@ -61,61 +61,66 @@ namespace DarknetYOLOv4
         /// <returns>List of all detected objects.</returns>
         public List<YoloPrediction> Predict(Bitmap inputImage, int resizedWidth = 512, int resizedHeight = 512)
         {
-            Mat layerOutputs = new Mat();
-
+            VectorOfMat layerOutputs = new VectorOfMat();
+            string[] outNames = Network.UnconnectedOutLayersNames;
             Image<Bgr, byte> tmp = inputImage.ToImage<Bgr, byte>();
             Mat input = tmp.Mat.Clone();
             tmp.Dispose();
             var blob = DnnInvoke.BlobFromImage(input, 1 / 255.0, new System.Drawing.Size(resizedWidth, resizedHeight), swapRB: true, crop: false);
             Network.SetInput(blob);
-            Network.Forward(layerOutputs);
+            Network.Forward(layerOutputs, outNames);
 
             List<Rectangle> boxes = new List<Rectangle>();
             List<float> confidences = new List<float>();
             List<int> classIDs = new List<int>();
 
-            float[,] lo = (float[,])layerOutputs.GetData();
-            for (int i = 0; i < lo.GetLength(0); i++)
+            for (int k = 0; k < layerOutputs.Size; k++)
             {
-                List<float> scores = new List<float>();
-                List<float> bb = new List<float>();
-                float confidence = 0;
 
-
-                for (int j = 0; j < lo.GetLength(1); j++)
+                float[,] lo = (float[,])layerOutputs[k].GetData();
+                for (int i = 0; i < lo.GetLength(0); i++)
                 {
-                    if (j > 4)
-                        scores.Add(lo[i, j]);
-                    else
-                        bb.Add(lo[i, j]);
+                    List<float> scores = new List<float>();
+                    List<float> bb = new List<float>();
+                    float confidence = 0;
 
 
-                }
+                    for (int j = 0; j < lo.GetLength(1); j++)
+                    {
+                        if (j > 4)
+                            scores.Add(lo[i, j]);
+                        else
+                            bb.Add(lo[i, j]);
 
-                int indexMax = !scores.Any() ? -1 :
-                                scores
-                                .Select((value, index) => new { Value = value, Index = index })
-                                .Aggregate((a, b) => (a.Value > b.Value) ? a : b)
-                                .Index;
-                if (indexMax != -1)
-                    confidence = scores[indexMax];
 
-                if (confidence > ConfidenceThreshold)
-                {
-                    bb[0] *= input.Width;
-                    bb[1] *= input.Height;
-                    bb[2] *= input.Width;
-                    bb[3] *= input.Height;
+                    }
 
-                    int x = (int)(bb[0] - (bb[2] / 2));
-                    int y = (int)(bb[1] - (bb[3] / 2));
+                    int indexMax = !scores.Any() ? -1 :
+                                    scores
+                                    .Select((value, index) => new { Value = value, Index = index })
+                                    .Aggregate((a, b) => (a.Value > b.Value) ? a : b)
+                                    .Index;
+                    if (indexMax != -1)
+                        confidence = scores[indexMax];
 
-                    boxes.Add(new Rectangle(x, y, (int)bb[2], (int)bb[3]));
-                    confidences.Add(confidence);
-                    classIDs.Add(indexMax);
+                    if (confidence > ConfidenceThreshold)
+                    {
+                        bb[0] *= input.Width;
+                        bb[1] *= input.Height;
+                        bb[2] *= input.Width;
+                        bb[3] *= input.Height;
+
+                        int x = (int)(bb[0] - (bb[2] / 2));
+                        int y = (int)(bb[1] - (bb[3] / 2));
+
+                        boxes.Add(new Rectangle(x, y, (int)bb[2], (int)bb[3]));
+                        confidences.Add(confidence);
+                        classIDs.Add(indexMax);
+                    }
                 }
             }
 
+            input.Dispose();
             int[] bIndexes = DnnInvoke.NMSBoxes(boxes.ToArray(), confidences.ToArray(), ConfidenceThreshold, NMSThreshold);
 
             List<YoloPrediction> filteredBoxes = new List<YoloPrediction>();

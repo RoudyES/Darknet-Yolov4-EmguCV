@@ -29,7 +29,7 @@ namespace YOLOv4_TEST
             VideoCapture cap = new VideoCapture(video);
 
             Console.WriteLine("[INFO] Loading Model...");
-            DarknetYOLO model = new DarknetYOLO(labels, weights, cfg);
+            DarknetYOLO model = new DarknetYOLO(labels, weights, cfg, PreferredBackend.Cuda, PreferredTarget.Cuda);
             model.NMSThreshold = 0.4f;
             model.ConfidenceThreshold = 0.4f;
 
@@ -71,7 +71,7 @@ namespace YOLOv4_TEST
                     break;
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
-                List<YoloPrediction> results = model.Predict(frame.ToBitmap().Clone() as Bitmap, 640, 640);
+                List<YoloPrediction> results = model.Predict(frame.ToBitmap().Clone() as Bitmap, 512, 512);
                 watch.Stop();
                 Console.WriteLine(watch.ElapsedMilliseconds);
                 foreach (var item in results)
