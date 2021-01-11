@@ -42,10 +42,8 @@ namespace DarknetYOLOv4
         /// <param name="target">Preferred computation target.</param>
         public DarknetYOLO(string labelsPath, string weightsPath, string configPath, PreferredBackend backend = PreferredBackend.OpenCV, PreferredTarget target = PreferredTarget.Cpu)
         {
-            Emgu.CV.Dnn.Backend b;
-            Emgu.CV.Dnn.Target t;
-            Enum.TryParse(backend.ToString(), out b);
-            Enum.TryParse(target.ToString(), out t);
+            Enum.TryParse(backend.ToString(), out Emgu.CV.Dnn.Backend b);
+            Enum.TryParse(target.ToString(), out Emgu.CV.Dnn.Target t);
             Network = DnnInvoke.ReadNetFromDarknet(configPath, weightsPath);
             Network.SetPreferableBackend(b);
             Network.SetPreferableTarget(t);
@@ -61,66 +59,51 @@ namespace DarknetYOLOv4
         /// <returns>List of all detected objects.</returns>
         public List<YoloPrediction> Predict(Bitmap inputImage, int resizedWidth = 512, int resizedHeight = 512)
         {
+            int width = inputImage.Width;
+            int height = inputImage.Height;
             VectorOfMat layerOutputs = new VectorOfMat();
             string[] outNames = Network.UnconnectedOutLayersNames;
-            Image<Bgr, byte> tmp = inputImage.ToImage<Bgr, byte>();
-            Mat input = tmp.Mat.Clone();
-            tmp.Dispose();
-            var blob = DnnInvoke.BlobFromImage(input, 1 / 255.0, new System.Drawing.Size(resizedWidth, resizedHeight), swapRB: true, crop: false);
+            var blob = DnnInvoke.BlobFromImage(inputImage.ToImage<Bgr, byte>(), 1 / 255.0, new System.Drawing.Size(resizedWidth, resizedHeight), swapRB: true, crop: false);
             Network.SetInput(blob);
             Network.Forward(layerOutputs, outNames);
 
             List<Rectangle> boxes = new List<Rectangle>();
             List<float> confidences = new List<float>();
             List<int> classIDs = new List<int>();
-
             for (int k = 0; k < layerOutputs.Size; k++)
             {
-
                 float[,] lo = (float[,])layerOutputs[k].GetData();
                 for (int i = 0; i < lo.GetLength(0); i++)
                 {
-                    List<float> scores = new List<float>();
-                    List<float> bb = new List<float>();
-                    float confidence = 0;
-
+                    if (lo[i, 4] < ConfidenceThreshold)
+                        continue;
+                    float max = 0;
+                    int idx = 0;
 
                     for (int j = 0; j < lo.GetLength(1); j++)
-                    {
                         if (j > 4)
-                            scores.Add(lo[i, j]);
-                        else
-                            bb.Add(lo[i, j]);
+                            if (lo[i, j] > max)
+                            {
+                                max = lo[i, j];
+                                idx = j - 5;
+                            }
 
-
-                    }
-
-                    int indexMax = !scores.Any() ? -1 :
-                                    scores
-                                    .Select((value, index) => new { Value = value, Index = index })
-                                    .Aggregate((a, b) => (a.Value > b.Value) ? a : b)
-                                    .Index;
-                    if (indexMax != -1)
-                        confidence = scores[indexMax];
-
-                    if (confidence > ConfidenceThreshold)
+                    if (max > ConfidenceThreshold)
                     {
-                        bb[0] *= input.Width;
-                        bb[1] *= input.Height;
-                        bb[2] *= input.Width;
-                        bb[3] *= input.Height;
+                        lo[i, 0] *= width;
+                        lo[i, 1] *= height;
+                        lo[i, 2] *= width;
+                        lo[i, 3] *= height;
 
-                        int x = (int)(bb[0] - (bb[2] / 2));
-                        int y = (int)(bb[1] - (bb[3] / 2));
+                        int x = (int)(lo[i, 0] - (lo[i, 2] / 2));
+                        int y = (int)(lo[i, 1] - (lo[i, 3] / 2));
 
-                        boxes.Add(new Rectangle(x, y, (int)bb[2], (int)bb[3]));
-                        confidences.Add(confidence);
-                        classIDs.Add(indexMax);
+                        boxes.Add(new Rectangle(x, y, (int)lo[i, 2], (int)lo[i, 3]));
+                        confidences.Add(max);
+                        classIDs.Add(idx);
                     }
                 }
             }
-
-            input.Dispose();
             int[] bIndexes = DnnInvoke.NMSBoxes(boxes.ToArray(), confidences.ToArray(), ConfidenceThreshold, NMSThreshold);
 
             List<YoloPrediction> filteredBoxes = new List<YoloPrediction>();
