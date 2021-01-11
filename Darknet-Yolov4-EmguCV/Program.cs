@@ -21,17 +21,17 @@ namespace YOLOv4_TEST
         static void Main(string[] args)
         {
             string labels = @"..\..\NetworkModels\coco.names";
-            string weights = @"..\..\NetworkModels\yolov4-csp.weights";
-            string cfg = @"..\..\NetworkModels\yolov4-csp.cfg";
+            string weights = @"..\..\NetworkModels\yolov4-tiny.weights";
+            string cfg = @"..\..\NetworkModels\yolov4-tiny.cfg";
             string image = @"..\..\Resources\cars road.jpg";
-            string video = @"..\..\Resources\carsdrivingunderbridge.mp4";
+            string video = @"..\..\Resources\test.mp4";
 
             VideoCapture cap = new VideoCapture(video);
 
             Console.WriteLine("[INFO] Loading Model...");
             DarknetYOLO model = new DarknetYOLO(labels, weights, cfg, PreferredBackend.Cuda, PreferredTarget.Cuda);
             model.NMSThreshold = 0.4f;
-            model.ConfidenceThreshold = 0.52f;
+            model.ConfidenceThreshold = 0.5f;
 
             //==============================================PREDICT FROM IMAGE==============================================
 
@@ -71,7 +71,7 @@ namespace YOLOv4_TEST
                     break;
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
-                List<YoloPrediction> results = model.Predict(frame.ToBitmap(), 320, 320);
+                List<YoloPrediction> results = model.Predict(frame.ToBitmap(), 512, 512);
                 watch.Stop();
                 Console.WriteLine($"Frame Processing time: {watch.ElapsedMilliseconds} ms." + $" FPS: {1000f / watch.ElapsedMilliseconds}");
                 foreach (var item in results)
