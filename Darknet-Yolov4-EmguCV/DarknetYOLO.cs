@@ -73,20 +73,21 @@ namespace DarknetYOLOv4
             for (int k = 0; k < layerOutputs.Size; k++)
             {
                 float[,] lo = (float[,])layerOutputs[k].GetData();
-                for (int i = 0; i < lo.GetLength(0); i++)
+                int len = lo.GetLength(0);
+                for (int i = 0; i < len; i++)
                 {
                     if (lo[i, 4] < ConfidenceThreshold)
                         continue;
                     float max = 0;
                     int idx = 0;
 
-                    for (int j = 0; j < lo.GetLength(1); j++)
-                        if (j > 4)
-                            if (lo[i, j] > max)
-                            {
-                                max = lo[i, j];
-                                idx = j - 5;
-                            }
+                    int len2 = lo.GetLength(1);
+                    for (int j = 5; j < len2; j++)
+                        if (lo[i, j] > max)
+                        {
+                            max = lo[i, j];
+                            idx = j - 5;
+                        }
 
                     if (max > ConfidenceThreshold)
                     {
