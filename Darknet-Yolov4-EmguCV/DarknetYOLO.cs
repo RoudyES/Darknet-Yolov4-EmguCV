@@ -63,7 +63,7 @@ namespace DarknetYOLOv4
             int height = inputImage.Height;
             VectorOfMat layerOutputs = new VectorOfMat();
             string[] outNames = Network.UnconnectedOutLayersNames;
-            var blob = DnnInvoke.BlobFromImage(inputImage.ToImage<Bgr, byte>(), 1 / 255.0, new System.Drawing.Size(resizedWidth, resizedHeight), swapRB: true, crop: false);
+            var blob = DnnInvoke.BlobFromImage(inputImage.ToImage<Bgr, byte>(), 1 / 255f, new System.Drawing.Size(resizedWidth, resizedHeight), swapRB: true, crop: false);
             Network.SetInput(blob);
             Network.Forward(layerOutputs, outNames);
 
