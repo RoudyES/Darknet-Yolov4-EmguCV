@@ -7,9 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Darknet-Yolov4-EmguCV", "Da
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Emgu.CV.Runtime.Windows", "References\EmguCV\Emgu.CV.Runtime\Windows\Emgu.CV.Runtime.Windows.shproj", "{ADC3C8E5-EBCD-4D3C-B3A4-20CFE0E42FC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarknetYolo", "DarknetYolo\DarknetYolo.csproj", "{7DABB117-1FC1-42B9-A385-B3786A85B025}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		References\EmguCV\Emgu.CV.Runtime\Windows\Emgu.CV.Runtime.Windows.projitems*{088d5238-32eb-4514-9832-13a1b9689a8c}*SharedItemsImports = 4
+		References\EmguCV\Emgu.CV.Runtime\Windows\Emgu.CV.Runtime.Windows.projitems*{7dabb117-1fc1-42b9-a385-b3786a85b025}*SharedItemsImports = 4
 		References\EmguCV\Emgu.CV.Runtime\Windows\Emgu.CV.Runtime.Windows.projitems*{adc3c8e5-ebcd-4d3c-b3a4-20cfe0e42fc1}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +24,10 @@ Global
 		{088D5238-32EB-4514-9832-13A1B9689A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{088D5238-32EB-4514-9832-13A1B9689A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{088D5238-32EB-4514-9832-13A1B9689A8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DABB117-1FC1-42B9-A385-B3786A85B025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DABB117-1FC1-42B9-A385-B3786A85B025}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DABB117-1FC1-42B9-A385-B3786A85B025}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DABB117-1FC1-42B9-A385-B3786A85B025}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

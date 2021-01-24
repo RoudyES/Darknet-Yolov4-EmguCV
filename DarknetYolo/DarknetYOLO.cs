@@ -8,10 +8,10 @@ using Emgu.CV;
 using Emgu.CV.Util;
 using System.Drawing;
 using Emgu.CV.Structure;
-using DarknetYOLOv4.Models;
+using DarknetYolo.Models;
 using System.IO;
 
-namespace DarknetYOLOv4
+namespace DarknetYolo
 {
     public class DarknetYOLO
     {
@@ -59,6 +59,27 @@ namespace DarknetYOLOv4
         /// <returns>List of all detected objects.</returns>
         public List<YoloPrediction> Predict(Bitmap inputImage, int resizedWidth = 512, int resizedHeight = 512)
         {
+            if (resizedWidth % 32 is int rest)
+            {
+                if (resizedWidth < 32)
+                    resizedWidth = 32;
+                if (rest < 16)
+                    resizedWidth = (int)(32 * Math.Floor(resizedWidth / 32f));
+                else
+                    resizedWidth = (int)(32 * Math.Ceiling(resizedWidth / 32f));
+            }
+
+            if (resizedHeight % 32 is int rest2)
+            {
+                if (resizedHeight < 32)
+                    resizedHeight = 32;
+                if (rest2 < 16)
+                    resizedHeight = (int)(32 * Math.Floor(resizedHeight / 32f));
+                else
+                    resizedHeight = (int)(32 * Math.Ceiling(resizedHeight / 32f));
+            }
+
+            Mat t = new Mat();
             int width = inputImage.Width;
             int height = inputImage.Height;
             VectorOfMat layerOutputs = new VectorOfMat();
@@ -99,7 +120,16 @@ namespace DarknetYOLOv4
                         int x = (int)(lo[i, 0] - (lo[i, 2] / 2));
                         int y = (int)(lo[i, 1] - (lo[i, 3] / 2));
 
-                        boxes.Add(new Rectangle(x, y, (int)lo[i, 2], (int)lo[i, 3]));
+                        var rect = new Rectangle(x, y, (int)lo[i, 2], (int)lo[i, 3]);
+
+                        rect.X = rect.X < 0 ? 0 : rect.X;
+                        rect.X = rect.X > width ? width - 1 : rect.X;
+                        rect.Y = rect.Y < 0 ? 0 : rect.Y;
+                        rect.Y = rect.Y > height ? height - 1 : rect.Y;
+                        rect.Width = rect.X + rect.Width > width ? width - rect.X - 1 : rect.Width;
+                        rect.Height = rect.Y + rect.Height > height ? height - rect.Y - 1 : rect.Height;
+
+                        boxes.Add(rect);
                         confidences.Add(max);
                         classIDs.Add(idx);
                     }

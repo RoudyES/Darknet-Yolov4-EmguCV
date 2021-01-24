@@ -11,8 +11,8 @@ using Emgu.CV.Structure;
 using System.Drawing;
 using System.Diagnostics;
 using System.Reflection;
-using DarknetYOLOv4;
-using DarknetYOLOv4.Models;
+using DarknetYolo;
+using DarknetYolo.Models;
 
 namespace YOLOv4_TEST
 {
@@ -23,7 +23,6 @@ namespace YOLOv4_TEST
             string labels = @"..\..\NetworkModels\coco.names";
             string weights = @"..\..\NetworkModels\yolov4-tiny.weights";
             string cfg = @"..\..\NetworkModels\yolov4-tiny.cfg";
-            string image = @"..\..\Resources\cars road.jpg";
             string video = @"..\..\Resources\test.mp4";
 
             VideoCapture cap = new VideoCapture(video);
@@ -32,27 +31,6 @@ namespace YOLOv4_TEST
             DarknetYOLO model = new DarknetYOLO(labels, weights, cfg, PreferredBackend.Cuda, PreferredTarget.Cuda);
             model.NMSThreshold = 0.4f;
             model.ConfidenceThreshold = 0.5f;
-
-            //==============================================PREDICT FROM IMAGE==============================================
-
-            //Mat imageFrame = new Mat(image);
-            //CvInvoke.Resize(imageFrame, imageFrame, new Size(1280, 768));
-            //Stopwatch watch = new Stopwatch();
-            //watch.Start();
-            //List<YoloPrediction> results = model.Predict(imageFrame.ToBitmap().Clone() as Bitmap, 352, 352);
-            //watch.Stop();
-            //Console.WriteLine(watch.ElapsedMilliseconds);
-            //foreach (var item in results)
-            //{
-            //    string text = item.Label + " " + item.Confidence;
-            //    CvInvoke.Rectangle(imageFrame, new Rectangle(item.Rectangle.X - 2, item.Rectangle.Y - 33, item.Rectangle.Width + 4, 40), new MCvScalar(255, 0, 0), -1);
-            //    CvInvoke.PutText(imageFrame, text, new Point(item.Rectangle.X, item.Rectangle.Y - 15), Emgu.CV.CvEnum.FontFace.HersheySimplex, 0.6, new MCvScalar(255, 255, 255), 2);
-            //    CvInvoke.Rectangle(imageFrame, item.Rectangle, new MCvScalar(255, 0, 0), 3);
-            //}
-            //CvInvoke.Imshow("test", imageFrame);
-            //CvInvoke.WaitKey(1);
-
-            //==============================================END PREDICT FROM IMAGE==============================================
 
             while (true)
             {

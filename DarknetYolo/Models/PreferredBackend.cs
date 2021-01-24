@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DarknetYOLOv4.Models
+namespace DarknetYolo.Models
 {
     public enum PreferredBackend
     {
